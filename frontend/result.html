@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SEARCH</title>
+  <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+  <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+  <script src="semantic/dist/semantic.min.js"></script>
+</head>
+<body>
+  <div class="ui fixed menu">
+    <div class="ui container">
+      <h3 class="item header"><a class="violet" href="index.html">Image Search Demo</a></h3>
+      <div class="left menu" style="width: 500px;">
+        <div class="item" style="width: 100%;">
+          <form class="ui action left icon input" action="result.html">
+            <i class="search icon"></i>
+            <input id="input" class="ui fluid" type="text" name="q" placeholder="Type in something...">
+            <button class="ui blue button">Search</button>
+          </form>
+        </div>
+      </div>
+      <div class="right menu">
+        <a class="item">About</a>
+        <a class="item">Fork on Github</a>
+      </div>
+    </div>
+  </div>
+
+    
+  <div class="ui container" style="margin-top: 80px;">
+    <div hidden>
+      <div id="card-template" class="ui card">
+        <div class="image">
+          <img>
+        </div>
+      </div>
+    </div>
+    <div class="ui four stackable cards" id="image-list">
+    </div>
+  </div>
+</body>
+<style>
+img {
+  object-fit: cover;
+  max-height: 250px;
+  min-height: 250px;
+}
+</style>
+<script>
+  var query = new URLSearchParams(window.location.search).get('q')
+  console.log(query)
+  document.getElementById('input').value = query
+  var template = document.getElementById("card-template")
+  var list = document.getElementById("image-list")
+  var urllist = [
+  "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
+  "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
+  "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
+  "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
+  "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
+  "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
+  "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
+  "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
+  "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
+  ]
+  for (let i=0; i<urllist.length; ++i) {
+    let url = urllist[i]
+    let o = template.cloneNode(true)
+    o.children[0].children[0].src = url
+    list.appendChild(o)
+  }
+</script>
+</html>
