@@ -2,18 +2,24 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>SEARCH</title>
+  <title>Open Images Search</title>
   <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
   <script
     src="https://code.jquery.com/jquery-3.1.1.min.js"
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
     crossorigin="anonymous"></script>
   <script src="semantic/dist/semantic.min.js"></script>
+  <script>
+    var query = new URLSearchParams(window.location.search).get('q')
+    if (query == "") {
+      location.href = "index.html"
+    }
+  </script>
 </head>
 <body>
   <div class="ui fixed menu">
     <div class="ui container">
-      <h3 class="item header"><a class="violet" href="index.html">Image Search Demo</a></h3>
+      <h3 class="item header"><a class="violet" href="index.html">Open Images Search</a></h3>
       <div class="left menu" style="width: 500px;">
         <div class="item" style="width: 100%;">
           <form class="ui action left icon input" action="result.html">
@@ -29,7 +35,6 @@
       </div>
     </div>
   </div>
-
     
   <div class="ui container" style="margin-top: 80px;">
     <div hidden>
@@ -52,7 +57,6 @@ img {
 </style>
 <script>
   var query = new URLSearchParams(window.location.search).get('q')
-  console.log(query)
   document.getElementById('input').value = query
   var template = document.getElementById("card-template")
   var list = document.getElementById("image-list")
