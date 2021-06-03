@@ -71,8 +71,15 @@ img {
   "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
   "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
   ]
-  for (let i=0; i<urllist.length; ++i) {
-    let url = urllist[i]
+  let xhr = new XMLHttpRequest
+  xhr.open("GET","http://example.com/query?q=" + encodeURIComponent(query))
+  xhr.onload = ()=>{
+    if (xhr.status == 200) {
+      urllist = JSON.parse(xhr.responseText)
+    }
+  }
+  xhr.send()
+  for (url of urllist) {
     let o = template.cloneNode(true)
     o.children[0].children[0].src = url
     list.appendChild(o)
