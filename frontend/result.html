@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Open Images Search</title>
   <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
-  <script
-    src="https://code.jquery.com/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="semantic/dist/semantic.min.js"></script>
   <script>
     var query = new URLSearchParams(window.location.search).get('q')
@@ -16,6 +15,7 @@
     }
   </script>
 </head>
+
 <body>
   <div class="ui fixed menu">
     <div class="ui container">
@@ -35,7 +35,7 @@
       </div>
     </div>
   </div>
-    
+
   <div class="ui container" style="margin-top: 80px;">
     <div hidden>
       <div id="card-template" class="ui card">
@@ -49,11 +49,11 @@
   </div>
 </body>
 <style>
-img {
-  object-fit: cover;
-  max-height: 250px;
-  min-height: 250px;
-}
+  img {
+    object-fit: cover;
+    max-height: 250px;
+    min-height: 250px;
+  }
 </style>
 <script>
   var query = new URLSearchParams(window.location.search).get('q')
@@ -61,19 +61,19 @@ img {
   var template = document.getElementById("card-template")
   var list = document.getElementById("image-list")
   var urllist = [
-  "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
-  "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
-  "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
-  "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
-  "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
-  "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
-  "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
-  "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
-  "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
+    "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
+    "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
+    "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
+    "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
+    "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
+    "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
+    "https://live.staticflickr.com/9/8252/8588588829_9ff9c80008_z.jpg",
+    "https://live.staticflickr.com/8/7477/15512184264_054a3bc570_z.jpg",
+    "https://live.staticflickr.com/4/3301/3605924265_59008ca9aa_z.jpg",
   ]
   let xhr = new XMLHttpRequest
-  xhr.open("GET","http://example.com/query?q=" + encodeURIComponent(query))
-  xhr.onload = ()=>{
+  xhr.open("GET", "http://166.111.69.22:3000/query?q=" + encodeURIComponent(query))
+  xhr.onload = () => {
     if (xhr.status == 200) {
       urllist = JSON.parse(xhr.responseText)
     }
@@ -85,4 +85,5 @@ img {
     list.appendChild(o)
   }
 </script>
+
 </html>

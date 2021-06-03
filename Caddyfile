@@ -1,0 +1,11 @@
+http://166.111.69.22:3000 {
+	file_server /train/* {
+		root /data/se/
+		precompressed zstd br gzip
+	}
+	file_server {
+		root /home/sengxian/work/open-images-search/frontend
+		precompressed zstd br gzip
+	}
+	reverse_proxy /query* http://127.0.0.1:3002
+}
