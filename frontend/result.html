@@ -9,7 +9,7 @@
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="semantic/dist/semantic.min.js"></script>
   <script>
-    var query = new URLSearchParams(window.location.search).get('q')
+    const query = new URLSearchParams(window.location.search).get('q')
     if (query == "") {
       location.href = "index.html"
     }
@@ -52,8 +52,9 @@
   <div class="ui card modal">
     <!-- <i class="close icon"></i> -->
     <a id="original-landing" href="https://www.google.com" class="image">
-      <img id="original-image" src="https://www.visitmammoth.com/wp-content/uploads/hero-Yosemite-Falls-from-trail-Yosemite-5-scaled.jpg">
-      </a>
+      <img id="original-image"
+        src="https://www.visitmammoth.com/wp-content/uploads/hero-Yosemite-Falls-from-trail-Yosemite-5-scaled.jpg">
+    </a>
   </div>
 </body>
 <style>
@@ -64,118 +65,36 @@
   }
 </style>
 <script>
-  var query = new URLSearchParams(window.location.search).get('q')
   document.getElementById('input').value = query
-  var template = document.getElementById("card-template")
-  var list = document.getElementById("image-list")
-  { // mock
-    let urllist = 
-        [{'ImageID': '00089480311a6391',
-      'OriginalURL': 'https://farm2.staticflickr.com/8658/16002988532_f6e414e143_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/68147320@N02/16002988532',
-      'Thumbnail300KURL': 'https://c1.staticflickr.com/9/8658/16002988532_3ae3d7458f_z.jpg'},
-     {'ImageID': '0014d375542ce4c8',
-      'OriginalURL': 'https://c1.staticflickr.com/4/3887/15222879186_b53b6c243e_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/moritzbarcelona/15222879186',
-      'Thumbnail300KURL': 'https://c6.staticflickr.com/4/3887/15222879186_ef3edcae48_z.jpg'},
-     {'ImageID': '0110305419877bdf',
-      'OriginalURL': 'https://c8.staticflickr.com/3/2429/3991383969_072bba2d97_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/sivart13/3991383969',
-      'Thumbnail300KURL': 'https://c6.staticflickr.com/3/2429/3991383969_92613360ec_z.jpg'},
-     {'ImageID': '0123ee05b36538f3',
-      'OriginalURL': 'https://farm4.staticflickr.com/4079/4921509381_1dd3ab8436_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/jeffreyww/4921509381',
-      'Thumbnail300KURL': 'https://c4.staticflickr.com/5/4079/4921509381_a4af0dd76f_z.jpg'},
-     {'ImageID': '0137b7a26ec0d6da',
-      'OriginalURL': 'https://c3.staticflickr.com/4/3172/3038568573_ae5ec45542_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/matt512/3038568573',
-      'Thumbnail300KURL': 'https://c1.staticflickr.com/4/3172/3038568573_df423f03da_z.jpg'},
-     {'ImageID': '0196775d4dc7c7a0',
-      'OriginalURL': 'https://farm1.staticflickr.com/7429/8862051767_1aa8b9f494_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/sfslim/8862051767',
-      'Thumbnail300KURL': 'https://c7.staticflickr.com/8/7429/8862051767_d8cae24e15_z.jpg'},
-     {'ImageID': '01d568691061185e',
-      'OriginalURL': 'https://c7.staticflickr.com/8/7144/13446738823_4bc94cc616_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/jeepersmedia/13446738823',
-      'Thumbnail300KURL': 'https://c2.staticflickr.com/8/7144/13446738823_e11b740a26_z.jpg'},
-     {'ImageID': '01e7a67f4b9b1db7',
-      'OriginalURL': 'https://farm8.staticflickr.com/4019/4718977461_cf6bab8c93_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/infrogmation/4718977461',
-      'Thumbnail300KURL': 'https://c1.staticflickr.com/5/4019/4718977461_65b061106b_z.jpg'},
-     {'ImageID': '01ecc5dcb9ea4d0e',
-      'OriginalURL': 'https://c7.staticflickr.com/6/5325/9078105286_a4d5f503dd_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/jeffreyww/9078105286',
-      'Thumbnail300KURL': 'https://c7.staticflickr.com/6/5325/9078105286_2d94a17d56_z.jpg'},
-     {'ImageID': '02a3f7268c838f91',
-      'OriginalURL': 'https://farm2.staticflickr.com/3929/19238502528_3f21100275_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/goblinbox/19238502528',
-      'Thumbnail300KURL': 'https://c2.staticflickr.com/4/3929/19238502528_dec80d500a_z.jpg'},
-     {'ImageID': '03e896aa1ec6b9f1',
-      'OriginalURL': 'https://farm2.staticflickr.com/7385/9923363486_acef55b6b5_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/sbogdanich/9923363486',
-      'Thumbnail300KURL': 'https://c8.staticflickr.com/8/7385/9923363486_231c338600_z.jpg'},
-     {'ImageID': '04c03bb29477b36d',
-      'OriginalURL': 'https://c6.staticflickr.com/3/2135/5786644960_4210b87d29_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/calgaryreviews/5786644960',
-      'Thumbnail300KURL': 'https://c2.staticflickr.com/3/2135/5786644960_cec11e3451_z.jpg'},
-     {'ImageID': '04cc2585f1f56e44',
-      'OriginalURL': 'https://farm5.staticflickr.com/4068/4612762075_4ce8fa6aa6_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/jeffreyww/4612762075',
-      'Thumbnail300KURL': 'https://c7.staticflickr.com/5/4068/4612762075_7fb985c6dc_z.jpg'},
-     {'ImageID': '050f54f842c6c6a6',
-      'OriginalURL': 'https://farm7.staticflickr.com/6050/6377360881_3fc88677bb_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/jeffreyww/6377360881',
-      'Thumbnail300KURL': 'https://c3.staticflickr.com/7/6050/6377360881_2eaf2d4e6f_z.jpg'},
-     {'ImageID': '055637641854addc',
-      'OriginalURL': 'https://c5.staticflickr.com/9/8124/8694856665_1331dd0025_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/rainsong/8694856665',
-      'Thumbnail300KURL': 'https://c4.staticflickr.com/9/8124/8694856665_93a7240a46_z.jpg'},
-     {'ImageID': '06ad049c3904925f',
-      'OriginalURL': 'https://c8.staticflickr.com/9/8893/17554387048_6076a62db5_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/angryjuliemonday/17554387048',
-      'Thumbnail300KURL': 'https://c2.staticflickr.com/9/8893/17554387048_6fb0abbda3_z.jpg'},
-     {'ImageID': '075613969af5968c',
-      'OriginalURL': 'https://c5.staticflickr.com/4/3857/14581899731_0f4cc20206_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/jeepersmedia/14581899731',
-      'Thumbnail300KURL': 'https://c3.staticflickr.com/4/3857/14581899731_8e0cdc18ca_z.jpg'},
-     {'ImageID': '075cf721ba0aa528',
-      'OriginalURL': 'https://c1.staticflickr.com/5/4140/5413086318_f453830d0c_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/raes_antics/5413086318',
-      'Thumbnail300KURL': 'https://c3.staticflickr.com/5/4140/5413086318_9c492288c2_z.jpg'},
-     {'ImageID': '0787fce4001e2497',
-      'OriginalURL': 'https://farm8.staticflickr.com/3078/2801810624_3f3ed1cab5_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/forever5yearsold/2801810624',
-      'Thumbnail300KURL': ''},
-     {'ImageID': '0798ea2cdf96e920',
-      'OriginalURL': 'https://farm1.staticflickr.com/7260/13234603295_748a31696a_o.jpg',
-      'OriginalLandingURL': 'https://www.flickr.com/photos/limaoscarjuliet/13234603295/',
-      'Thumbnail300KURL': 'https://c4.staticflickr.com/8/7260/13234603295_2870a4bab9_z.jpg'},
-     ]
-    for (const url of urllist) {
-      let o = template.cloneNode(true)
-      o.children[0].children[0].src = url.Thumbnail300KURL
-      o.onclick = function(){
-        document.getElementById('original-landing').href = url.OriginalLandingURL
-        document.getElementById('original-image').src = url.Thumbnail300KURL
-        $('.ui.modal').modal('show')
-      }
-      list.appendChild(o)
-    }
-  }
+  let template = document.getElementById("card-template")
+  let list = document.getElementById("image-list")
   let xhr = new XMLHttpRequest
   xhr.open("GET", "http://166.111.69.22:3000/query?q=" + encodeURIComponent(query))
   xhr.onload = () => {
     if (xhr.status == 200) {
       let urllist = JSON.parse(xhr.responseText).urllist
       for (const url of urllist) {
-        let o = template.cloneNode(true)
-        o.children[0].children[0].src = url.Thumbnail300KURL
-        o.onclick = function(){
-          document.getElementById('original-landing').href = url.OriginalLandingURL
-          document.getElementById('original-image').src = url.Thumbnail300KURL
-          $('.ui.modal').modal('show')
-        }
-        list.appendChild(o)
+        new Promise((resolve, reject) => {
+          let xhr = new XMLHttpRequest();
+          xhr.open('GET', url.Thumbnail300KURL, true);
+          xhr.responseType = 'blob';
+          xhr.onload = function (e) {
+            if (this.status !== 200 || this.response.size < 1024) reject()
+            else resolve(this.response)
+          };
+          xhr.send();
+        }).then((blob) => {
+          let o = template.cloneNode(true)
+          const urlCreator = window.URL || window.webkitURL;
+          const imageURL = urlCreator.createObjectURL(blob);
+          o.children[0].children[0].src = imageURL;
+          o.onclick = function () {
+            document.getElementById('original-landing').href = url.OriginalLandingURL
+            document.getElementById('original-image').src = imageURL;
+            $('.ui.modal').modal('show')
+          }
+          list.appendChild(o)
+        }, () => { })
       }
     }
   }
