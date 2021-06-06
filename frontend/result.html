@@ -79,8 +79,11 @@
           xhr.open('GET', url.Thumbnail300KURL, true);
           xhr.responseType = 'blob';
           xhr.onload = function (e) {
-            if (this.status !== 200 || this.response.size < 1024) reject()
-            else resolve(this.response)
+            if (this.status !== 200 || this.response.size < 10 * 1024) reject()
+            else {
+              console.log(this.response.size)
+              resolve(this.response)
+            }
           };
           xhr.send();
         }).then((blob) => {
