@@ -70,7 +70,16 @@ def image_lookup(imageid):
 
 @app.route("/query", methods=["GET"])
 def search():
-    query = request.args.get("q", "")
+    query = request.args.get("q", "").lower()
     if not query:
         return {"urllist": []}
     return {"urllist": list(map(image_lookup, classes[class_dict[query]][0:100]))}
+
+# @app.route("/prompt", methods=["GET"])
+# def related_tags():
+#     query = request.args.get("q", "").lower()
+#     tags = []
+#     for label in class_dict:
+#         if label.startswith(query):
+#             tags.append(label)
+#     return {"taglist": tags[0:10]}

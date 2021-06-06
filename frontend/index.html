@@ -12,23 +12,67 @@
 
 <body>
   <div class="ui grid middle aligned" style="height: 100%;">
-    <div class="row">
+    <div class="row" style="margin-bottom: 150px;">
       <div class="column">
         <h2 class="ui center aligned blue header">Open Images Search</h2>
         <div class="ui text container">
-          <div class="menu" style="margin-bottom: 150px;">
+          <div class="ui search">
+            <div class="ui fluid icon input">
+              <input class="prompt" type="text" placeholder="Common passwords...">
+              <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
+          </div>
+          <!-- <div class="menu">
             <div class="item">
-              <form class="ui fluid action left icon input" action="result.html">
-                <i class="search icon"></i>
-                <input class="ui fluid" type="text" name="q" placeholder="Type in something...">
+              <form class="ui fluid action input" action="result.html">
+                <div class="ui fluid search selection dropdown">
+                  <input type="text" class="search contains-data" autocomplete="off" name="q" placeholder="Type in something..." id="selection__input">
+                  <div class="menu transition hidden" id="selection__menu">
+                    <div class="item">apple</div>
+                    <div class="item">banana</div>
+                    <div class="item">cake</div>
+                    <div class="item">donut</div>
+                    <div class="item">egg roll</div>
+                    <div class="item">fries</div>         
+                  </div>
+                </div>
                 <button class="ui blue button">Search</button>
               </form>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
     </div>
   </div>
 </body>
+<script>
+  let menu = document.getElementById("selection__menu")
+  let input = document.getElementById("selection__input")
+  menu.hide = function() {
+    menu.classList.remove("visible")
+    menu.classList.add("hidden")
+  }
+  menu.show = function() {
+    menu.classList.remove("hidden")
+    menu.classList.add("visible")
+  }
+  function updatePrompt() {
+    if (input.value == "") {
+      menu.hide()
+    }
+    else {
+      menu.show()
+    }
+  }
+  input.onfocus = ()=>{updatePrompt()}
+  input.onblur = ()=>{menu.hide()}
+  input.oninput = ()=>{updatePrompt()}
+  menu.onmousedown = (e) => {
+    console.log(e.target)
+    input.value = e.target.textContent;
+  };
+
+</script>
 
 </html>

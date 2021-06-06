@@ -23,10 +23,19 @@
       <h3 class="item header"><a class="violet" href="index.html">Open Images Search</a></h3>
       <div class="left menu" style="width: 500px;">
         <div class="item" style="width: 100%;">
-          <form class="ui action left icon input" action="result.html">
-            <i class="search icon"></i>
-            <input id="input" class="ui fluid" type="text" name="q" placeholder="Type in something...">
-            <button class="ui blue button">Search</button>
+          <form class="ui action search selection dropdown" action="result.html">
+            <!-- <i class="search icon"></i> -->
+            <input id="input" type="hidden" name="country">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select Country</div>
+            <div class="menu">
+              <div class="item" data-value="af">Afghanistan</div>
+              <div class="item" data-value="ax">Aland Islands</div>
+            </div>
+
+
+            <!-- <input id="input" class="ui fluid" type="text" name="q" placeholder="Type in something..."> -->
+            <!-- <button class="ui blue button">Search</button> -->
           </form>
         </div>
       </div>
