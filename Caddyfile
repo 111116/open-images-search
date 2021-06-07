@@ -8,4 +8,5 @@ http://166.111.69.22:3000 {
 		precompressed zstd br gzip
 	}
 	reverse_proxy /query* http://127.0.0.1:3002
+	reverse_proxy /prompt* http://127.0.0.1:3002
 }
