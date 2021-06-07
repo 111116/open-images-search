@@ -54,7 +54,7 @@
   <div class="ui card modal" style="width:auto; height:auto;">
     <!-- <i class="close icon"></i> -->
     <a id="original-landing" href="https://www.google.com" class="image">
-      <img id="original-image" style="max-height: 80vh;" src="">
+      <img id="original-image" style="" src="">
     </a>
   </div>
 </body>
@@ -95,8 +95,16 @@
           o.children[0].children[0].src = imageURL;
           o.onclick = function () {
             document.getElementById('original-landing').href = url.OriginalLandingURL
-            document.getElementById('original-image').src = imageURL;
-            $('.ui.modal').modal('show')
+            let img = document.getElementById('original-image')
+            img.src = imageURL;
+            img.onload = function(){
+              let aspect = img.naturalWidth / img.naturalHeight
+              console.log("aspect", aspect)
+              img.style.width = `calc(min(80vw, 80vh*${aspect}))`
+              img.style.height = `calc(min(80vh, 80vw/${aspect}))`
+              img.src = url.OriginalURL;
+            }
+            $('.ui.modal').modal({duration:300}).modal('show')
           }
           list.appendChild(o)
         }, () => { })
