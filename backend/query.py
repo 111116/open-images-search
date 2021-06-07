@@ -75,11 +75,11 @@ def search():
         return {"urllist": []}
     return {"urllist": list(map(image_lookup, classes[class_dict[query]][0:100]))}
 
-# @app.route("/prompt", methods=["GET"])
-# def related_tags():
-#     query = request.args.get("q", "").lower()
-#     tags = []
-#     for label in class_dict:
-#         if label.startswith(query):
-#             tags.append(label)
-#     return {"taglist": tags[0:10]}
+@app.route("/prompt", methods=["GET"])
+def related_tags():
+    query = request.args.get("q", "").lower()
+    tags = []
+    for label in class_dict:
+        if label.startswith(query):
+            tags.append(label)
+    return {"results": list(map(lambda x:{'title':x}, tags[0:10]))}

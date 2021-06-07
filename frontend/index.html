@@ -23,23 +23,6 @@
             </div>
             <div class="results"></div>
           </div>
-          <!-- <div class="menu">
-            <div class="item">
-              <form class="ui fluid action input" action="result.html">
-                <div class="ui fluid search selection dropdown">
-                  <input type="text" class="search contains-data" autocomplete="off" name="q" placeholder="Type in something..." id="selection__input">
-                  <div class="menu transition hidden" id="selection__menu">
-                    <div class="item">apple</div>
-                    <div class="item">banana</div>
-                    <div class="item">cake</div>
-                    <div class="item">donut</div>
-                    <div class="item">egg roll</div>
-                    <div class="item">fries</div>         
-                  </div>
-                </div>
-                <button class="ui blue button">Search</button>
-              </form>
-            </div> -->
           </div>
         </div>
       </div>
@@ -47,32 +30,12 @@
   </div>
 </body>
 <script>
-  let menu = document.getElementById("selection__menu")
-  let input = document.getElementById("selection__input")
-  menu.hide = function() {
-    menu.classList.remove("visible")
-    menu.classList.add("hidden")
-  }
-  menu.show = function() {
-    menu.classList.remove("hidden")
-    menu.classList.add("visible")
-  }
-  function updatePrompt() {
-    if (input.value == "") {
-      menu.hide()
+$('.ui.search')
+  .search({
+    apiSettings: {
+      url: '//api.github.com/search/repositories?q={query}'
     }
-    else {
-      menu.show()
-    }
-  }
-  input.onfocus = ()=>{updatePrompt()}
-  input.onblur = ()=>{menu.hide()}
-  input.oninput = ()=>{updatePrompt()}
-  menu.onmousedown = (e) => {
-    console.log(e.target)
-    input.value = e.target.textContent;
-  };
-
+  })
 </script>
 
 </html>
