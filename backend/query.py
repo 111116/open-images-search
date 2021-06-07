@@ -59,7 +59,7 @@ else:
 @cross_origin()
 def search():
     query = request.args.get("q", "").lower()
-    if not query:
+    if not query or not query in class_dict:
         return {"urllist": []}
     return {"urllist": list(map(lambda x:dict(imageinfo[x]._asdict()), classes[class_dict[query]][0:100]))}
 
