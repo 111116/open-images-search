@@ -23,20 +23,13 @@
       <h3 class="item header"><a class="violet" href="index.html">Open Images Search</a></h3>
       <div class="left menu" style="width: 500px;">
         <div class="item" style="width: 100%;">
-          <form class="ui action search selection dropdown" action="result.html">
-            <!-- <i class="search icon"></i> -->
-            <input id="input" type="hidden" name="country">
-            <i class="dropdown icon"></i>
-            <div class="default text">Select Country</div>
-            <div class="menu">
-              <div class="item" data-value="af">Afghanistan</div>
-              <div class="item" data-value="ax">Aland Islands</div>
-            </div>
-
-
-            <!-- <input id="input" class="ui fluid" type="text" name="q" placeholder="Type in something..."> -->
-            <!-- <button class="ui blue button">Search</button> -->
-          </form>
+          <div class="ui search" style="width: 100%;">
+            <form class="ui fluid icon input" action="result.html">
+              <input id="input" name="q" class="prompt" type="text" placeholder="What kind of images are you looking for?">
+              <i class="search link icon" onclick="$('form').submit()"></i>
+            </form>
+            <div class="results"></div>
+          </div>
         </div>
       </div>
       <div class="right menu">
@@ -76,6 +69,7 @@
   document.getElementById('input').value = query
   let template = document.getElementById("card-template")
   let list = document.getElementById("image-list")
+  // get search results
   let xhr = new XMLHttpRequest
   xhr.open("GET", "http://166.111.69.22:3000/query?q=" + encodeURIComponent(query))
   xhr.onload = () => {
@@ -110,6 +104,13 @@
     }
   }
   xhr.send()
+  // input prompt
+  $('.ui.search')
+    .search({
+      apiSettings: {
+        url: 'http://166.111.69.22:3000/prompt?q={query}'
+      }
+    })
 </script>
 
 </html>

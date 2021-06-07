@@ -17,10 +17,10 @@
         <h2 class="ui center aligned blue header">Open Images Search</h2>
         <div class="ui text container">
           <div class="ui search">
-            <div class="ui fluid icon input">
-              <input class="prompt" type="text" placeholder="Common passwords...">
-              <i class="search icon"></i>
-            </div>
+            <form class="ui fluid icon input" action="result.html">
+              <input autoFocus id="input" name="q" class="prompt" type="text" placeholder="What kind of images are you looking for?">
+              <i class="search link icon" onclick="$('form').submit()"></i>
+            </form>
             <div class="results"></div>
           </div>
         </div>
@@ -30,6 +30,7 @@
   </div>
 </body>
 <script>
+  // input prompt
   $('.ui.search')
     .search({
       apiSettings: {
