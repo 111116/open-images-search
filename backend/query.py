@@ -66,4 +66,6 @@ def related_tags():
     for label in class_dict:
         if label.startswith(query):
             tags.append(label)
+    if query in tags:
+        tags.insert(0, tags.pop(tags.index(query)))
     return {"results": list(map(lambda x:{'title':x}, tags[0:10]))}
