@@ -31,49 +31,34 @@ else:
             class_dict[name.lower()] = label
     pickle.dump(class_dict, open("class_dict.pkl", "wb"))
 
-if exists("imageurl.pkl"):
-    imageurl = pickle.load(open("imageurl.pkl", "rb"))
+from collections import namedtuple
+ImageInfo = namedtuple('ImageInfo', "ImageID Subset OriginalURL OriginalLandingURL License AuthorProfileURL Author Title OriginalSize OriginalMD5 Thumbnail300KURL Rotation Fetched")
+if exists("imageinfo.pkl"):
+    imageinfo = pickle.load(open("imageinfo.pkl", "rb"))
 else:
-    # imageID -> image URL
-    imageurl = {}
+    fetched_list = []
+    with open('boxed/annotations/oidv6-train-annotations-bbox.csv') as f:
+        next(f)
+        for imageId, *misc in csv.reader(f):
+            fetched_list.append(imageId)
+    fetched_set = set(fetched_list)
+    # imageID -> image info
+    imageinfo = {}
     with open("oidv6-train-images-with-labels-with-rotation.csv", "r") as f:
         next(f)  # ignore title line
-        for (
-            ImageID,
-            Subset,
-            OriginalURL,
-            OriginalLandingURL,
-            License,
-            AuthorProfileURL,
-            Author,
-            Title,
-            OriginalSize,
-            OriginalMD5,
-            Thumbnail300KURL,
-            Rotation,
-        ) in csv.reader(f):
-            if Subset == "train":
-                imageurl[ImageID] = [OriginalURL, OriginalLandingURL, Thumbnail300KURL]
-    pickle.dump(imageurl, open("imageurl.pkl", "wb"))
-
-
-# result formating
-def image_lookup(imageid):
-    urls = imageurl[imageid]
-    return {
-        "ImageID": imageid,
-        "OriginalURL": urls[0],
-        "OriginalLandingURL": urls[1],
-        "Thumbnail300KURL": urls[2],
-    }
-
+        for line in csv.reader(f):
+            info = ImageInfo(*line, 0)
+            if info.Subset == "train":
+                info.Fetched = info.ImageID in fetched_set
+                imageinfo[info.ImageID] = info
+    pickle.dump(imageinfo, open("imageinfo.pkl", "wb"))
 
 @app.route("/query", methods=["GET"])
 def search():
     query = request.args.get("q", "").lower()
     if not query:
         return {"urllist": []}
-    return {"urllist": list(map(image_lookup, classes[class_dict[query]][0:100]))}
+    return {"urllist": list(map(lambda x:imageinfo[x], classes[class_dict[query]][0:100]))}
 
 @app.route("/prompt", methods=["GET"])
 def related_tags():
