@@ -53,19 +53,40 @@
   <!-- dialog -->
   <div class="ui card modal" style="width:auto; height:auto;">
     <!-- <i class="close icon"></i> -->
-    <a id="original-landing" href="https://www.google.com" class="image">
-      <img id="original-image" style="" src="">
+    <a id="original-landing" href="https://owldb.net/artist/ikuta-lilas/" class="image">
+      <img id="original-image" style="width:400px;height:400px;" src="https://owldb.net/wp-content/uploads/2020/06/Ikura.jpg">
+      <div id="image-loader" class="ui loader"></div>
     </a>
+    <div class="content">
+      <span class="right floated">
+        <!-- <i class="heart outline like icon"></i> -->
+        <a id="dialog-license" href="https://creativecommons.org/licenses/by/2.0/">
+          License
+        </a>
+      </span>
+      <a id="dialog-title" href="https://owldb.net/artist/ikuta-lilas/" class="header">Ikuta Rira!</a>
+      <div class="meta">
+        <a id="dialog-author-link" href="https://www.youtube.com/channel/UCztEY6czNyJKjRWMwuur9bg">
+          <span id="dialog-author" class="author">YOASOBI</span>
+        </a>
+      </div>
+    </div>
   </div>
 </body>
 <style>
   .thumbnail {
     object-fit: cover;
-    max-height: 250px;
-    min-height: 250px;
+    max-height: calc(min(250px, 20vw));
+    min-height: calc(min(250px, 20vw));
   }
 </style>
 <script>
+  function getLicenseName(url)
+  {
+    if (url == "https://creativecommons.org/licenses/by/2.0/") return 'CC-BY 2.0';
+    return "License";
+  }
+  // $('.ui.modal').modal({duration:300}).modal('show')
   document.getElementById('input').value = query
   let template = document.getElementById("card-template")
   let list = document.getElementById("image-list")
@@ -94,16 +115,29 @@
           const imageURL = urlCreator.createObjectURL(blob);
           o.children[0].children[0].src = imageURL;
           o.onclick = function () {
+            // display large image
             document.getElementById('original-landing').href = url.OriginalLandingURL
             let img = document.getElementById('original-image')
             img.src = imageURL;
             img.onload = function(){
               let aspect = img.naturalWidth / img.naturalHeight
               console.log("aspect", aspect)
-              img.style.width = `calc(min(80vw, 80vh*${aspect}))`
-              img.style.height = `calc(min(80vh, 80vw/${aspect}))`
+              img.style.width = `calc(min(80vw, 75vh*${aspect}))`
+              img.style.height = `calc(min(75vh, 80vw/${aspect}))`
               img.src = url.OriginalURL;
+              img.onload = function(){
+                document.getElementById("image-loader").classList.add("disabled")
+              }
             }
+            // display metadata
+            document.getElementById("image-loader").classList.remove("disabled")
+            document.getElementById("dialog-author").innerText = url.Author
+            document.getElementById("dialog-author-link").href = url.AuthorProfileURL
+            document.getElementById("dialog-title").innerText = url.Title
+            document.getElementById("dialog-title").href = url.OriginalLandingURL
+            document.getElementById("dialog-license").innerText = getLicenseName(url.License)
+            document.getElementById("dialog-license").href = url.License
+            // show
             $('.ui.modal').modal({duration:300}).modal('show')
           }
           list.appendChild(o)
