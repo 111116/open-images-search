@@ -50,9 +50,8 @@ else:
     with open("oidv6-train-images-with-labels-with-rotation.csv", "r") as f:
         next(f)  # ignore title line
         for line in csv.reader(f):
-            info = ImageInfo(*line, 0)
+            info = ImageInfo(*line, line[0] in fetched_set)
             if info.Subset == "train":
-                info.Fetched = info.ImageID in fetched_set
                 imageinfo[info.ImageID] = info
     pickle.dump(imageinfo, open("imageinfo.pkl", "wb"))
 
