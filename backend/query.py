@@ -1,8 +1,11 @@
 from flask import request, Flask
+from flask_cors import CORS, cross_origin
 from os.path import exists
 import pickle, csv
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config["CORS_HEADERS"] = "Content-Type"
 
 if exists("classes.pkl"):
     classes = pickle.load(open("classes.pkl", "rb"))
@@ -69,17 +72,20 @@ def image_lookup(imageid):
 
 
 @app.route("/query", methods=["GET"])
+@cross_origin()
 def search():
     query = request.args.get("q", "").lower()
     if not query:
         return {"urllist": []}
     return {"urllist": list(map(image_lookup, classes[class_dict[query]][0:100]))}
 
+
 @app.route("/prompt", methods=["GET"])
+@cross_origin()
 def related_tags():
     query = request.args.get("q", "").lower()
     tags = []
     for label in class_dict:
         if label.startswith(query):
             tags.append(label)
-    return {"results": list(map(lambda x:{'title':x}, tags[0:10]))}
+    return {"results": list(map(lambda x: {"title": x}, tags[0:10]))}
