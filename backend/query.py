@@ -118,4 +118,4 @@ def handleupload():
     )
     f = request.files['file']
     cachePool[token] = process(f)
-    redirect(f"/result.html?q={token}")
+    return redirect(f"/result.html?q={token}")
