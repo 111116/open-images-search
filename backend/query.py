@@ -1,14 +1,16 @@
 from flask import request, Flask
+from flask import redirect
 from flask_cors import CORS, cross_origin
 from os.path import exists
-import pickle, csv
+from collections import namedtuple
+import pickle, csv, random, string
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
 
-if exists("classes.pkl"):
-    classes = pickle.load(open("classes.pkl", "rb"))
+if exists(".cache/classes.pkl"):
+    classes = pickle.load(open(".cache/classes.pkl", "rb"))
 else:
     # class label -> imageID
     classes = {}  # mapping from label to list of imageID
@@ -20,10 +22,10 @@ else:
                 if not label in classes:
                     classes[label] = []
                 classes[label].append(imageid)
-    pickle.dump(classes, open("classes.pkl", "wb"))
+    pickle.dump(classes, open(".cache/classes.pkl", "wb"))
 
-if exists("class_dict.pkl"):
-    class_dict = pickle.load(open("class_dict.pkl", "rb"))
+if exists(".cache/class_dict.pkl"):
+    class_dict = pickle.load(open(".cache/class_dict.pkl", "rb"))
 else:
     # class name -> class label
     class_dict = {}
@@ -32,19 +34,28 @@ else:
         csvreader = csv.reader(f)
         for label, name in csvreader:
             class_dict[name.lower()] = label
-    pickle.dump(class_dict, open("class_dict.pkl", "wb"))
+    pickle.dump(class_dict, open(".cache/class_dict.pkl", "wb"))
 
-from collections import namedtuple
-ImageInfo = namedtuple('ImageInfo', "ImageID Subset OriginalURL OriginalLandingURL License AuthorProfileURL Author Title OriginalSize OriginalMD5 Thumbnail300KURL Rotation Fetched")
-if exists("imageinfo.pkl"):
-    imageinfo = pickle.load(open("imageinfo.pkl", "rb"))
+
+if exists(".cache/fetched_set.pkl"):
+    fetched_set = pickle.load(open(".cache/fetched_set.pkl", "rb"))
 else:
     fetched_list = []
-    with open('boxed/annotations/oidv6-train-annotations-bbox.csv') as f:
+    with open("boxed/annotations/oidv6-train-annotations-bbox.csv") as f:
         next(f)
         for imageId, *misc in csv.reader(f):
             fetched_list.append(imageId)
     fetched_set = set(fetched_list)
+    pickle.dump(fetched_set, open(".cache/fetched_set.pkl", "wb"))
+
+
+ImageInfo = namedtuple(
+    "ImageInfo",
+    "ImageID Subset OriginalURL OriginalLandingURL License AuthorProfileURL Author Title OriginalSize OriginalMD5 Thumbnail300KURL Rotation Fetched",
+)
+if exists(".cache/imageinfo.pkl"):
+    imageinfo = pickle.load(open(".cache/imageinfo.pkl", "rb"))
+else:
     # imageID -> image info
     imageinfo = {}
     with open("oidv6-train-images-with-labels-with-rotation.csv", "r") as f:
@@ -53,15 +64,30 @@ else:
             info = ImageInfo(*line, line[0] in fetched_set)
             if info.Subset == "train":
                 imageinfo[info.ImageID] = info
-    pickle.dump(imageinfo, open("imageinfo.pkl", "wb"))
+    pickle.dump(imageinfo, open(".cache/imageinfo.pkl", "wb"))
+
+
+cachePool = {}
+
 
 @app.route("/query", methods=["GET"])
 @cross_origin()
 def search():
     query = request.args.get("q", "").lower()
-    if not query or not query in class_dict:
+    if not query:
         return {"urllist": []}
-    return {"urllist": list(map(lambda x:dict(imageinfo[x]._asdict()), classes[class_dict[query]][0:100]))}
+    elif query in cachePool:
+        return cachePool[query]
+    elif not query in class_dict:
+        return {"urllist": []}
+    return {
+        "urllist": list(
+            map(
+                lambda x: dict(imageinfo[x]._asdict()),
+                classes[class_dict[query]][0:100],
+            )
+        )
+    }
 
 
 @app.route("/prompt", methods=["GET"])
@@ -75,3 +101,18 @@ def related_tags():
     if query in tags:
         tags.insert(0, tags.pop(tags.index(query)))
     return {"results": list(map(lambda x: {"title": x}, tags[0:10]))}
+
+
+def process(img):
+    pass
+
+
+@app.route("/upload", methods=["POST"])
+@cross_origin()
+def search():
+    token = "".join(
+        random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
+    )
+    img = None
+    cachePool[token] = process(img)
+    redirect(f"/result.html?q={token}")
