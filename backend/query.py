@@ -107,7 +107,7 @@ def related_tags():
 def process(file):
     img = Image.open(file)
     width, height = img.size
-    return [width, height]
+    return {"width":width, "height": height}
 
 
 @app.route("/upload", methods=["POST"])
@@ -117,6 +117,5 @@ def handleupload():
         random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
     )
     f = request.files['file']
-    return process(f)
     cachePool[token] = process(f)
     return redirect(f"/result.html?q={token}")
