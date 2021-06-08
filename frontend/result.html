@@ -26,13 +26,17 @@
           <div class="ui search" style="width: 100%;">
             <form id="search-form" class="ui fluid icon input" action="result.html">
               <div class="ui loader" id="form-loader"></div>
-              <input id="input" name="q" class="prompt" type="text" placeholder="What kind of images are you looking for?">
+              <input id="input" name="q" class="prompt" type="text"
+                placeholder="What kind of images are you looking for?">
               <i class="blue search link icon" onclick="$('#search-form').submit()"></i>
             </form>
             <form id="upload-form" action="upload" method="POST" enctype="multipart/form-data">
-              <input type="file" name="file" accept="image/*" onchange="$('#form-loader').addClass('active');$('#upload-form').submit()" class="inputfile" id="file" style="display: none;"/>
-              <label for="file" style="position: absolute; right: 40px; top: 9px;" data-tooltip="Search by Image" data-position="bottom center">
-                <i  class="grey large image outline link icon"></i>
+              <input type="file" name="file" accept="image/*"
+                onchange="$('#form-loader').addClass('active');$('#upload-form').submit()" class="inputfile" id="file"
+                style="display: none;" />
+              <label for="file" style="position: absolute; right: 40px; top: 9px;" data-tooltip="Search by Image"
+                data-position="bottom center">
+                <i class="grey large image outline link icon"></i>
               </label>
             </form>
             <div class="results"></div>
@@ -41,8 +45,8 @@
       </div>
       <div class="right menu">
         <!-- <a class="item disabled"> -->
-          <!-- <i class="info circle icon"></i> -->
-          <!-- About -->
+        <!-- <i class="info circle icon"></i> -->
+        <!-- About -->
         <!-- </a> -->
         <a class="item" href="https://github.com/111116/open-images-search">
           <i class="github icon"></i>
@@ -81,18 +85,18 @@
       </div>
     </div>
     <script>
-      function filterCallback(v,t,e) {
+      function filterCallback(v, t, e) {
         largeV = true
         mediumV = true
         smallV = true
-        if (t=="Large") { mediumV = false; smallV = false; }
-        if (t=="Medium") { largeV = false; smallV = false; }
-        if (t=="Small") { mediumV = false; largeV = false; }
-        $(".large-image").css("display", largeV?"block":"none")
-        $(".medium-image").css("display", mediumV?"block":"none")
-        $(".small-image").css("display", smallV?"block":"none")
+        if (t == "Large") { mediumV = false; smallV = false; }
+        if (t == "Medium") { largeV = false; smallV = false; }
+        if (t == "Small") { mediumV = false; largeV = false; }
+        $(".large-image").css("display", largeV ? "block" : "none")
+        $(".medium-image").css("display", mediumV ? "block" : "none")
+        $(".small-image").css("display", smallV ? "block" : "none")
       }
-      $('#filter-dropdown').dropdown({onChange: filterCallback})
+      $('#filter-dropdown').dropdown({ onChange: filterCallback })
     </script>
     <!-- result list -->
     <div class="ui four stackable cards" id="image-list">
@@ -129,8 +133,7 @@
   }
 </style>
 <script>
-  function getLicenseName(url)
-  {
+  function getLicenseName(url) {
     if (url == "https://creativecommons.org/licenses/by/2.0/") return 'CC-BY 2.0';
     return "License";
   }
@@ -144,7 +147,7 @@
   xhr.onload = () => {
     if (xhr.status == 200) {
       let urllist = JSON.parse(xhr.responseText).urllist
-      for (const url of urllist) {
+      for (const [index, url] of urllist.entries()) {
         new Promise((resolve, reject) => {
           let xhr = new XMLHttpRequest();
           xhr.open('GET', url.Thumbnail300KURL, true);
@@ -174,13 +177,13 @@
             document.getElementById('original-landing').href = url.OriginalLandingURL
             let img = document.getElementById('original-image')
             img.src = imageURL;
-            img.onload = function(){
+            img.onload = function () {
               let aspect = img.naturalWidth / img.naturalHeight
               console.log("aspect", aspect)
               img.style.width = `calc(min(80vw, 75vh*${aspect}))`
               img.style.height = `calc(min(75vh, 80vw/${aspect}))`
               img.src = url.OriginalURL;
-              img.onload = function(){
+              img.onload = function () {
                 document.getElementById("image-loader").classList.add("disabled")
               }
             }
@@ -193,9 +196,13 @@
             document.getElementById("dialog-license").innerText = getLicenseName(url.License)
             document.getElementById("dialog-license").href = url.License
             // show
-            $('.ui.modal').modal({duration:300}).modal('show')
+            $('.ui.modal').modal({ duration: 300 }).modal('show')
           }
+          o['index'] = index
           list.appendChild(o)
+          $('#image-list').sort(function (a, b) {
+            return parseInt(a.index) - parseInt(b.index);
+          })
         }, () => { })
       }
     }
