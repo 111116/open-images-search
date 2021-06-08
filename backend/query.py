@@ -10,6 +10,7 @@ import numpy as np
 import pickle, csv, random, string
 import hashlib
 import time
+import cv2, imutils, imageio
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -124,14 +125,24 @@ def retrive(embedding):
     )
 
 
+def prepare_image(file):
+    img = imageio.imread(file)
+    print(f"original_shape: {img.shape}")
+    img = imutils.resize(img, width=128)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    print(f"resize_shape: {img.shape}")
+    return img
+
+
 def process(file):
     hash = hashlib.sha224(file).hexdigest()
     start = time.time()
-    embedding = extract_feature(file)
-    end = time.time()
-    print(f"[{hash}] time: ", end - start)
-    print(embedding)
-    return hash, retrive(embedding)
+    embedding = extract_feature(prepare_image(file))
+    print(f"feature_extract time: ", time.time() - start)
+    start = time.time()
+    result = retrive(embedding)
+    print(f"retrive time: ", time.time() - start)
+    return hash, result
 
 
 @app.route("/upload", methods=["POST"])

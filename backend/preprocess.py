@@ -30,8 +30,21 @@ count = [(len(classes[key]), label2name[key]) for key in classes]
 
 count.sort(key=lambda x: x[0], reverse=True)
 
-os.rmdir("data/small")
-os.mkdir("data/small")
+# os.rmdir("data/small")
+# os.mkdir("data/small")
+# for _, label in count[:50]:
+#     os.mkdir(f"data/small/{label}")
+#     cnt = 0
+#     for imgID in classes[class_dict[label]]:
+#         imgPath = join(DATA_PATH, f"{imgID}.jpg")
+#         if exists(imgPath):
+#             copyfile(imgPath, f"data/small/{label}/{imgID}.jpg")
+#             cnt += 1
+#             if cnt >= 200:
+#                 break
+
+os.rmdir("data/big")
+os.mkdir("data/big")
 for _, label in count[:50]:
     os.mkdir(f"data/small/{label}")
     cnt = 0
@@ -40,5 +53,5 @@ for _, label in count[:50]:
         if exists(imgPath):
             copyfile(imgPath, f"data/small/{label}/{imgID}.jpg")
             cnt += 1
-            if cnt >= 50:
+            if cnt >= 200:
                 break

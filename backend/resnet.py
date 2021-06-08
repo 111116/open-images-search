@@ -115,7 +115,10 @@ if torch.cuda.is_available():
 
 def extract_feature(img_path):
     res_model.eval()
-    img = imageio.imread(img_path, pilmode="RGB")
+    try:
+        img = imageio.imread(img_path, pilmode="RGB")
+    except OSError:
+        img = img_path
     img = img[:, :, ::-1]  # switch to BGR
     img = np.transpose(img, (2, 0, 1)) / 255.0
     img[0] -= means[0]  # reduce B's mean
