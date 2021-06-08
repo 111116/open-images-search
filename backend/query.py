@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 from os.path import exists
 from collections import namedtuple
 import pickle, csv, random, string
+from PIL import Image
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -104,13 +105,14 @@ def related_tags():
 
 
 def process(filename):
-    print(filename)
-    pass
+    img = Image.open(filename)
+    width, height = img.size
+    return [width, height]
 
 
 @app.route("/upload", methods=["POST"])
 @cross_origin()
-def search():
+def handleupload():
     token = "".join(
         random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
     )
