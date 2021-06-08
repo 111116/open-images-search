@@ -104,8 +104,8 @@ def related_tags():
     return {"results": list(map(lambda x: {"title": x}, tags[0:10]))}
 
 
-def process(filename):
-    img = Image.open(filename)
+def process(file):
+    img = Image.open(file)
     width, height = img.size
     return [width, height]
 
@@ -117,7 +117,5 @@ def handleupload():
         random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
     )
     f = request.files['file']
-    sfname = 'images/'+token
-    f.save(sfname)
-    cachePool[token] = process(sfname)
+    cachePool[token] = process(f)
     redirect(f"/result.html?q={token}")
