@@ -3,8 +3,13 @@ from flask import redirect
 from flask_cors import CORS, cross_origin
 from os.path import exists
 from collections import namedtuple
-import pickle, csv, random, string
 from PIL import Image
+from resnet import extract_feature
+
+import numpy as np
+import pickle, csv, random, string
+import hashlib
+import time
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -67,8 +72,15 @@ else:
                 imageinfo[info.ImageID] = info
     pickle.dump(imageinfo, open(".cache/imageinfo.pkl", "wb"))
 
+cache_pool = {}
+if exists(".cache/cache_pool.pkl"):
+    imageinfo = pickle.load(open(".cache/cache_pool.pkl", "rb"))
 
-cachePool = {}
+embedding_dict = pickle.load(open("data/embedding_dict.pkl", "rb"))
+
+
+def to_response(imgs):
+    return {"urllist": list(map(lambda x: dict(imageinfo[x]._asdict()), imgs))}
 
 
 @app.route("/query", methods=["GET"])
@@ -77,18 +89,11 @@ def search():
     query = request.args.get("q", "")
     if not query:
         return {"urllist": []}
-    elif query in cachePool:
-        return cachePool[query]
+    elif query in cache_pool:
+        return cache_pool[query]
     elif not query.lower() in class_dict:
         return {"urllist": []}
-    return {
-        "urllist": list(
-            map(
-                lambda x: dict(imageinfo[x]._asdict()),
-                classes[class_dict[query.lower()]][0:100],
-            )
-        )
-    }
+    return to_response(classes[class_dict[query.lower()]][0:100])
 
 
 @app.route("/prompt", methods=["GET"])
@@ -104,10 +109,29 @@ def related_tags():
     return {"results": list(map(lambda x: {"title": x}, tags[0:10]))}
 
 
+def retrive(embedding):
+    return to_response(
+        map(
+            lambda x: x[1],
+            sorted(
+                [
+                    (np.sum(np.absolute(embedding - embedding_dict[imgID])), imgID)
+                    for imgID in embedding_dict
+                ],
+                key=lambda x: x[0],
+            )[:50],
+        )
+    )
+
+
 def process(file):
-    img = Image.open(file)
-    width, height = img.size
-    return {"width":width, "height": height}
+    hash = hashlib.sha224(file).hexdigest()
+    start = time.time()
+    embedding = extract_feature(file)
+    end = time.time()
+    print(f"[{hash}] time: ", end - start)
+    print(embedding)
+    return hash, retrive(embedding)
 
 
 @app.route("/upload", methods=["POST"])
@@ -116,6 +140,7 @@ def handleupload():
     token = "".join(
         random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
     )
-    f = request.files['file']
-    cachePool[token] = process(f)
-    return redirect(f"/result.html?q={token}")
+    f = request.files["file"]
+    hash, result = process(f.read())
+    cache_pool[hash] = result
+    return redirect(f"/result.html?q={hash}")

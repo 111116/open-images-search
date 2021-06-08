@@ -147,3 +147,5 @@ cython_debug/
 *.pkl
 *.csv
 boxed/
+.cache/
+data/
