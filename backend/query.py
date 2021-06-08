@@ -10,6 +10,7 @@ import numpy as np
 import pickle, csv, random, string
 import hashlib
 import time
+import re
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -92,7 +93,13 @@ def search():
     elif query in cache_pool:
         return cache_pool[query]
     elif not query.lower() in class_dict:
-        return {"urllist": []}
+        queries = list(map(lambda s:s.strip(), re.split(' in a | on a | with a | under a | and | with | on | under | in | a | an | the ', ' ' + query.lower())))
+        queries = list(filter(None, queries))
+        for q in queries:
+            if not q in class_dict:
+                return {"urllist": []}
+        results = list(set.intersection(*map(lambda x: set(classes[class_dict[x]]), queries)))
+        return to_response(results[0:100])
     return to_response(classes[class_dict[query.lower()]][0:100])
 
 
