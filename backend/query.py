@@ -71,7 +71,7 @@ else:
 @cross_origin()
 def search():
     query = request.args.get("q", "").lower()
-    if not query:
+    if not query or not query in class_dict:
         return {"urllist": []}
     return {
         "urllist": list(
