@@ -24,9 +24,15 @@
       <div class="left menu" style="width: 500px;">
         <div class="item" style="width: 100%;">
           <div class="ui search" style="width: 100%;">
-            <form class="ui fluid icon input" action="result.html">
+            <form id="search-form" class="ui fluid icon input" action="result.html">
               <input id="input" name="q" class="prompt" type="text" placeholder="What kind of images are you looking for?">
-              <i class="search link icon" onclick="$('form').submit()"></i>
+              <i class="blue search link icon" onclick="$('#search-form').submit()"></i>
+            </form>
+            <form id="upload-form" action="upload" method="POST" enctype="multipart/form-data" title="Search by Image">
+              <input type="file" name="file" accept="image/*" onchange="$('#upload-form').submit()" class="inputfile" id="file" style="display: none;"/>
+              <label for="file" style="position: absolute; right: 40px; top: 9px;">
+                <i  class="grey large image outline link icon"></i>
+              </label>
             </form>
             <div class="results"></div>
           </div>
