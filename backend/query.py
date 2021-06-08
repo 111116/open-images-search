@@ -34,17 +34,28 @@ else:
             class_dict[name.lower()] = label
     pickle.dump(class_dict, open("class_dict.pkl", "wb"))
 
-from collections import namedtuple
-ImageInfo = namedtuple('ImageInfo', "ImageID Subset OriginalURL OriginalLandingURL License AuthorProfileURL Author Title OriginalSize OriginalMD5 Thumbnail300KURL Rotation Fetched")
-if exists("imageinfo.pkl"):
-    imageinfo = pickle.load(open("imageinfo.pkl", "rb"))
+
+if exists("fetched_list.pkl"):
+    fetched_set = pickle.load(open("fetched_list.pkl", "rb"))
 else:
     fetched_list = []
-    with open('boxed/annotations/oidv6-train-annotations-bbox.csv') as f:
+    with open("boxed/annotations/oidv6-train-annotations-bbox.csv") as f:
         next(f)
         for imageId, *misc in csv.reader(f):
             fetched_list.append(imageId)
     fetched_set = set(fetched_list)
+    pickle.dump(fetched_set, open("fetched_set.pkl", "wb"))
+
+
+from collections import namedtuple
+
+ImageInfo = namedtuple(
+    "ImageInfo",
+    "ImageID Subset OriginalURL OriginalLandingURL License AuthorProfileURL Author Title OriginalSize OriginalMD5 Thumbnail300KURL Rotation Fetched",
+)
+if exists("imageinfo.pkl"):
+    imageinfo = pickle.load(open("imageinfo.pkl", "rb"))
+else:
     # imageID -> image info
     imageinfo = {}
     with open("oidv6-train-images-with-labels-with-rotation.csv", "r") as f:
@@ -55,13 +66,21 @@ else:
                 imageinfo[info.ImageID] = info
     pickle.dump(imageinfo, open("imageinfo.pkl", "wb"))
 
+
 @app.route("/query", methods=["GET"])
 @cross_origin()
 def search():
     query = request.args.get("q", "").lower()
     if not query:
         return {"urllist": []}
-    return {"urllist": list(map(lambda x:dict(imageinfo[x]._asdict()), classes[class_dict[query]][0:100]))}
+    return {
+        "urllist": list(
+            map(
+                lambda x: dict(imageinfo[x]._asdict()),
+                classes[class_dict[query]][0:100],
+            )
+        )
+    }
 
 
 @app.route("/prompt", methods=["GET"])
