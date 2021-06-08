@@ -39,13 +39,20 @@
         </div>
       </div>
       <div class="right menu">
-        <a class="item">About</a>
-        <a class="item" href="https://github.com/111116/open-images-search">Fork on Github</a>
+        <!-- <a class="item disabled"> -->
+          <!-- <i class="info circle icon"></i> -->
+          <!-- About -->
+        <!-- </a> -->
+        <a class="item" href="https://github.com/111116/open-images-search">
+          <i class="github icon"></i>
+          Github
+        </a>
       </div>
     </div>
   </div>
   <!-- results -->
   <div class="ui container" style="margin-top: 85px;">
+    <!-- card template -->
     <div hidden>
       <div id="card-template" class="ui card">
         <div class="image">
@@ -53,6 +60,40 @@
         </div>
       </div>
     </div>
+    <!-- filter -->
+    <div id="filter-dropdown" class="ui labeled icon top right pointing dropdown" style="margin-bottom: 1em;">
+      <i class="filter icon"></i>
+      <span class="text">Filter by Size</span>
+      <div class="menu">
+        <div class="item">
+          Any Size
+        </div>
+        <div class="item">
+          Large
+        </div>
+        <div class="item">
+          Medium
+        </div>
+        <div class="item">
+          Small
+        </div>
+      </div>
+    </div>
+    <script>
+      function filterCallback(v,t,e) {
+        largeV = true
+        mediumV = true
+        smallV = true
+        if (t=="Large") { mediumV = false; smallV = false; }
+        if (t=="Medium") { largeV = false; smallV = false; }
+        if (t=="Small") { mediumV = false; largeV = false; }
+        $(".large-image").css("display", largeV?"block":"none")
+        $(".medium-image").css("display", mediumV?"block":"none")
+        $(".small-image").css("display", smallV?"block":"none")
+      }
+      $('#filter-dropdown').dropdown({onChange: filterCallback})
+    </script>
+    <!-- result list -->
     <div class="ui four stackable cards" id="image-list">
     </div>
   </div>
@@ -120,6 +161,13 @@
           const urlCreator = window.URL || window.webkitURL;
           const imageURL = urlCreator.createObjectURL(blob);
           o.children[0].children[0].src = imageURL;
+          // size selection class
+          if (url.OriginalSize > 2000000)
+            o.classList.add("large-image");
+          else if (url.OriginalSize > 400000)
+            o.classList.add("medium-image");
+          else
+            o.classList.add("small-image");
           o.onclick = function () {
             // display large image
             document.getElementById('original-landing').href = url.OriginalLandingURL
