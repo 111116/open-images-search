@@ -27,7 +27,25 @@ cd open-images-search
 ./backend/oidv6-class-descriptions.csv
 ```
 
+此外，为了使用图搜图功能，首先需要准备好图片，将图片放入 `./backend/data/medium/` 文件夹中，图片命名为 `图片ID.jpg`（如果使用 open images dataset 默认就是此格式），接着使用 `resnet.py` 进行预处理，预处理好的图片表示会存储在 `data/embedding_dict_new.pkl` 中。
+
 安装依赖项：
 
-运行前端与后端：
+```
+pip install -r requirement.txt
+```
 
+使用 Caddy 启动前端
+
+```
+sudo caddy start
+```
+
+使用 Flask 启动后端
+
+```
+cd backend
+FLASK_APP=query flask run --port 3002 --host 0.0.0.0 --no-reload
+```
+
+还需要修改前端代码中对应 API 的路径，对应服务器的 IP

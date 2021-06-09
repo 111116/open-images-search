@@ -4,9 +4,11 @@ from flask_cors import CORS, cross_origin
 from os.path import exists
 from collections import namedtuple
 from PIL import Image
-from resnet import extract_feature
+from resnet import extract_feature, prepare_image
 
 import numpy as np
+from numpy import dot
+from numpy.linalg import norm
 import pickle, csv, random, string
 import hashlib
 import time
@@ -78,7 +80,7 @@ cache_pool = {}
 if exists(".cache/cache_pool.pkl"):
     imageinfo = pickle.load(open(".cache/cache_pool.pkl", "rb"))
 
-embedding_dict = pickle.load(open("data/embedding_dict.pkl", "rb"))
+embedding_dict = pickle.load(open("data/embedding_dict_new.pkl", "rb"))
 
 
 def to_response(imgs):
@@ -127,28 +129,24 @@ def related_tags():
     return {"results": list(map(lambda x: {"title": x}, tags[0:10]))}
 
 
+def distance(a, b):
+    # (np.sum(np.absolute(embedding - embedding_dict[imgID])), imgID)
+    return -dot(a, b) / (norm(a) * norm(b))
+
+
 def retrive(embedding):
     return to_response(
         map(
             lambda x: x[1],
             sorted(
                 [
-                    (np.sum(np.absolute(embedding - embedding_dict[imgID])), imgID)
+                    (distance(embedding, embedding_dict[imgID]), imgID)
                     for imgID in embedding_dict
                 ],
                 key=lambda x: x[0],
             )[:50],
         )
     )
-
-
-def prepare_image(file):
-    img = imageio.imread(file)
-    print(f"original_shape: {img.shape}")
-    img = imutils.resize(img, width=128)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    print(f"resize_shape: {img.shape}")
-    return img
 
 
 def process(file):

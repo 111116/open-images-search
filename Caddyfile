@@ -1,4 +1,4 @@
-http://166.111.69.22:3000 {
+http://localhost:3000 {
 	file_server /train/* {
 		root /data/se/
 		precompressed zstd br gzip

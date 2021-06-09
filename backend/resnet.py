@@ -9,7 +9,7 @@ import torch.utils.model_zoo as model_zoo
 import numpy as np
 import imageio
 import os
-import pickle
+import pickle, imutils, cv2
 
 
 # configs for histogram
@@ -113,12 +113,17 @@ if torch.cuda.is_available():
     res_model = res_model.cuda()
 
 
-def extract_feature(img_path):
+def prepare_image(file):
+    img = imageio.imread(file, pilmode="RGB")
+    # print(f"original_shape: {img.shape}")
+    img = cv2.resize(img, (224, 224))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # print(f"resize_shape: {img.shape}")
+    return img
+
+
+def extract_feature(img):
     res_model.eval()
-    try:
-        img = imageio.imread(img_path, pilmode="RGB")
-    except OSError:
-        img = img_path
     img = img[:, :, ::-1]  # switch to BGR
     img = np.transpose(img, (2, 0, 1)) / 255.0
     img[0] -= means[0]  # reduce B's mean
@@ -135,7 +140,26 @@ def extract_feature(img_path):
     return d_hist
 
 
-if __name__ == "__main__":
+def extract_feature_batched(imgs):
+    res_model.eval()
+    inputs = []
+    batch_size = len(imgs)
+    for img in imgs:
+        img = img[:, :, ::-1]  # switch to BGR
+        img = np.transpose(img, (2, 0, 1)) / 255.0
+        img[0] -= means[0]  # reduce B's mean
+        img[1] -= means[1]  # reduce G's mean
+        img[2] -= means[2]  # reduce R's mean
+        img = np.expand_dims(img, axis=0)
+        inputs.append(torch.autograd.Variable(torch.from_numpy(img).cuda().float()))
+    inputs = torch.cat(inputs)
+    d_hist = res_model(inputs)[pick_layer]
+    d_hist = d_hist.data.view(batch_size, -1).cpu().numpy()
+    d_hist /= np.sum(d_hist, axis=1)[:, None]  # normalize
+    return d_hist
+
+
+def single():
     embedding_dict = {}
     for label in os.listdir("../data/small/"):
         cnt, all = 0, 0
@@ -150,3 +174,28 @@ if __name__ == "__main__":
             all += 1
         print(f"{cnt}/{all}")
         pickle.dump(embedding_dict, open("embedding_dict.pkl", "wb"))
+
+
+def divide_chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
+
+
+def batch():
+    embedding_dict = {}
+    cnt = 0
+    file_list = list(os.listdir("./data/medium/"))
+    for chunk in tqdm(list(divide_chunks(file_list, 64))):
+        img_chunks = [prepare_image(f"./data/medium/{item}") for item in chunk]
+        hists = extract_feature_batched(img_chunks)
+        for idx in range(len(hists)):
+            embedding = hists[idx]
+            embedding_dict[chunk[idx].split(".")[0]] = embedding
+        cnt += 1
+        if cnt % 10 == 0:
+            pickle.dump(embedding_dict, open("embedding_dict_new.pkl", "wb"))
+    pickle.dump(embedding_dict, open("embedding_dict_new.pkl", "wb"))
+
+
+if __name__ == "__main__":
+    batch()
